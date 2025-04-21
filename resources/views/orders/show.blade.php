@@ -62,11 +62,14 @@
                         <div class="col-sm-6">
                             <h4>วิธีการชำระเงิน</h4>
                             @php
-                                $payment = $order
-                                    ->transactions()
-                                    ->where('type', 'payment')
-                                    ->where('status', 'successful')
-                                    ->first();
+                                $payment = null;
+                                if (method_exists($order, 'transactions')) {
+                                    $payment = $order
+                                        ->transactions()
+                                        ->where('type', 'payment')
+                                        ->where('status', 'successful')
+                                        ->first();
+                                }
                             @endphp
                             @if ($payment)
                                 <div class="fs-sm">
@@ -538,4 +541,4 @@
             });
         });
     </script>
-@
+    @

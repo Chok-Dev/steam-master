@@ -24,6 +24,7 @@ class Order extends Model
     /**
      * ความสัมพันธ์กับ User (ผู้ซื้อ)
      */
+    
     public function user()
     {
         return $this->belongsTo(User::class);

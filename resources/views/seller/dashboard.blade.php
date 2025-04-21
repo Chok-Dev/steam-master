@@ -207,6 +207,7 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/plugins/chart.js/chart.umd.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // กราฟยอดขาย

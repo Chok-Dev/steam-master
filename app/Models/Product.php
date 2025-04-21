@@ -26,7 +26,10 @@ class Product extends Model
         'attributes' => 'array',  // สำคัญ: cast attributes เป็น array
         'price' => 'decimal:2',
     ];
-
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'seller_id', 'user_id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

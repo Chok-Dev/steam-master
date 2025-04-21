@@ -14,6 +14,24 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
+    /**
+     * Display the user's profile.
+     */
+    public function show(Request $request, $username = null): View
+    {
+        // ถ้าไม่มีการระบุ username ให้แสดงโปรไฟล์ของผู้ใช้ที่เข้าสู่ระบบ
+        if (is_null($username)) {
+            return view('profile.show', [
+                'user' => $request->user(),
+            ]);
+        }
+
+        // แสดงโปรไฟล์ตาม username ที่ระบุ
+        $user = \App\Models\User::where('name', $username)->firstOrFail();
+        return view('profile.show', [
+            'user' => $user,
+        ]);
+    }
     public function edit(Request $request): View
     {
         return view('profile.edit', [
