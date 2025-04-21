@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'แก้ไขสินค้า')
-@section('subtitle', 'แก้ไขข้อมูลสินค้า ' . $product->name)
+@section('title', 'เพิ่มสินค้าใหม่')
+@section('subtitle', 'เพิ่มสินค้าใหม่เข้าสู่ระบบ')
 
 @section('breadcrumb')
     <li class="breadcrumb-item">
@@ -13,13 +13,13 @@
     <li class="breadcrumb-item">
         <a href="{{ route('seller.products.index') }}">สินค้าของฉัน</a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">แก้ไข {{ $product->name }}</li>
+    <li class="breadcrumb-item active" aria-current="page">เพิ่มสินค้าใหม่</li>
 @endsection
 
 @section('content')
     <div class="block block-rounded">
         <div class="block-header block-header-default">
-            <h3 class="block-title">แก้ไขข้อมูลสินค้า</h3>
+            <h3 class="block-title">เพิ่มสินค้าใหม่</h3>
             <div class="block-options">
                 <a href="{{ route('seller.products.index') }}" class="btn btn-alt-secondary">
                     <i class="fa fa-arrow-left me-1"></i> กลับ
@@ -27,15 +27,14 @@
             </div>
         </div>
         <div class="block-content">
-            <form action="{{ route('seller.products.update', $product) }}" method="POST">
+            <form action="{{ route('seller.products.store') }}" method="POST">
                 @csrf
-                @method('PUT')
                 
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-4">
                             <label class="form-label" for="name">ชื่อสินค้า</label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $product->name) }}" required>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
                             @error('name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -44,7 +43,7 @@
                     <div class="col-md-6">
                         <div class="mb-4">
                             <label class="form-label" for="price">ราคา (บาท)</label>
-                            <input type="number" class="form-control @error('price') is-invalid @enderror" id="price" name="price" value="{{ old('price', $product->price) }}" step="0.01" min="0" required>
+                            <input type="number" class="form-control @error('price') is-invalid @enderror" id="price" name="price" value="{{ old('price') }}" step="0.01" min="0" required>
                             @error('price')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -59,7 +58,7 @@
                             <select class="form-select @error('category_id') is-invalid @enderror" id="category_id" name="category_id" required>
                                 <option value="">เลือกหมวดหมู่</option>
                                 @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
@@ -74,12 +73,12 @@
                             <label class="form-label" for="type">ประเภทสินค้า</label>
                             <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
                                 <option value="">เลือกประเภทสินค้า</option>
-                                <option value="steam_key" {{ old('type', $product->type) == 'steam_key' ? 'selected' : '' }}>Steam Key</option>
-                                <option value="origin_key" {{ old('type', $product->type) == 'origin_key' ? 'selected' : '' }}>Origin Key</option>
-                                <option value="gog_key" {{ old('type', $product->type) == 'gog_key' ? 'selected' : '' }}>GOG Key</option>
-                                <option value="uplay_key" {{ old('type', $product->type) == 'uplay_key' ? 'selected' : '' }}>Uplay Key</option>
-                                <option value="battlenet_key" {{ old('type', $product->type) == 'battlenet_key' ? 'selected' : '' }}>Battle.net Key</option>
-                                <option value="account" {{ old('type', $product->type) == 'account' ? 'selected' : '' }}>Account</option>
+                                <option value="steam_key" {{ old('type') == 'steam_key' ? 'selected' : '' }}>Steam Key</option>
+                                <option value="origin_key" {{ old('type') == 'origin_key' ? 'selected' : '' }}>Origin Key</option>
+                                <option value="gog_key" {{ old('type') == 'gog_key' ? 'selected' : '' }}>GOG Key</option>
+                                <option value="uplay_key" {{ old('type') == 'uplay_key' ? 'selected' : '' }}>Uplay Key</option>
+                                <option value="battlenet_key" {{ old('type') == 'battlenet_key' ? 'selected' : '' }}>Battle.net Key</option>
+                                <option value="account" {{ old('type') == 'account' ? 'selected' : '' }}>Account</option>
                             </select>
                             @error('type')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -89,27 +88,16 @@
                 </div>
                 
                 <div class="mb-4">
-                    <label class="form-label" for="status">สถานะ</label>
-                    <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
-                        <option value="available" {{ old('status', $product->status) == 'available' ? 'selected' : '' }}>พร้อมขาย</option>
-                        <option value="pending" {{ old('status', $product->status) == 'pending' ? 'selected' : '' }}>รอดำเนินการ</option>
-                        <option value="sold" {{ old('status', $product->status) == 'sold' ? 'selected' : '' }}>ขายแล้ว</option>
-                    </select>
-                    @error('status')
+                    <label class="form-label" for="description">คำอธิบาย</label>
+                    <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="6" required>{{ old('description') }}</textarea>
+                    @error('description')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
                 
                 <div class="mb-4">
-                    <label class="form-label" for="description">คำอธิบาย</label>
-                    <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="6" required>{{ old('description', $product->description) }}</textarea>
-                    @error('description')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="mb-4">
                     <label class="form-label" for="key_data">รหัสเกม/คีย์</label>
-                    <textarea class="form-control @error('key_data') is-invalid @enderror" id="key_data" name="key_data" rows="3" placeholder="ใส่รหัสเกม หรือข้อมูลบัญชีที่ต้องส่งให้ผู้ซื้อ">{{ old('description', $product->decryptedKey) }}</textarea>
+                    <textarea class="form-control @error('key_data') is-invalid @enderror" id="key_data" name="key_data" rows="3" placeholder="ใส่รหัสเกม หรือข้อมูลบัญชีที่ต้องส่งให้ผู้ซื้อ"></textarea>
                     <div class="form-text">
                         <i class="fa fa-info-circle me-1"></i> รหัสนี้จะถูกเข้ารหัสเพื่อความปลอดภัยและจะถูกส่งให้ผู้ซื้อทันทีหลังชำระเงิน
                     </div>
@@ -117,40 +105,23 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+                
                 <h4 class="mt-4 mb-3">ข้อมูลเพิ่มเติม</h4>
                 
                 <div id="attributes-container">
-                    @if(!empty($product->attributes) && is_array($product->attributes))
-                        @foreach($product->attributes as $key => $value)
-                            <div class="row mb-2 attribute-row">
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" name="attributes[keys][]" value="{{ $key }}" placeholder="คุณสมบัติ (เช่น แพลตฟอร์ม, ภาษา)">
-                                </div>
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" name="attributes[values][]" value="{{ $value }}" placeholder="ค่า (เช่น Steam, ภาษาอังกฤษ)">
-                                </div>
-                                <div class="col-md-2">
-                                    <button type="button" class="btn btn-alt-danger remove-attribute">
-                                        <i class="fa fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        @endforeach
-                    @else
-                        <div class="row mb-2 attribute-row">
-                            <div class="col-md-5">
-                                <input type="text" class="form-control" name="attributes[keys][]" placeholder="คุณสมบัติ (เช่น แพลตฟอร์ม, ภาษา)">
-                            </div>
-                            <div class="col-md-5">
-                                <input type="text" class="form-control" name="attributes[values][]" placeholder="ค่า (เช่น Steam, ภาษาอังกฤษ)">
-                            </div>
-                            <div class="col-md-2">
-                                <button type="button" class="btn btn-alt-danger remove-attribute">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
+                    <div class="row mb-2 attribute-row">
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" name="attributes[keys][]" placeholder="คุณสมบัติ (เช่น แพลตฟอร์ม, ภาษา)">
                         </div>
-                    @endif
+                        <div class="col-md-5">
+                            <input type="text" class="form-control" name="attributes[values][]" placeholder="ค่า (เช่น Steam, ภาษาอังกฤษ)">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-alt-danger remove-attribute">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="mb-4">
@@ -161,7 +132,7 @@
                 
                 <div class="mb-4">
                     <button type="submit" class="btn btn-alt-primary">
-                        <i class="fa fa-save me-1"></i> บันทึกข้อมูล
+                        <i class="fa fa-save me-1"></i> บันทึกสินค้า
                     </button>
                     <a href="{{ route('seller.products.index') }}" class="btn btn-alt-secondary">
                         ยกเลิก
