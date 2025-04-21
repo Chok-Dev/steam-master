@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -17,34 +18,34 @@ class DashboardController extends Controller
         $totalSellers = User::where('role', 'seller')->count();
         $totalProducts = Product::count();
         $totalSales = Transaction::where('type', 'payment')->where('status', 'successful')->sum('amount');
-        
+
         // ออเดอร์ล่าสุด
         $recentOrders = Order::with(['user', 'orderItems.product.user'])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
-        
+
         // ธุรกรรมล่าสุด
         $recentTransactions = Transaction::with(['user', 'order'])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
-        
+
         // ผู้ใช้ล่าสุด
         $recentUsers = User::orderBy('created_at', 'desc')
             ->take(5)
             ->get();
-        
+
         // ข้อมูลสำหรับกราฟ
         // ข้อมูลยอดขาย 7 วันล่าสุด
         $salesData = [];
-        
+
         // สร้างข้อมูลย้อนหลัง 7 วัน
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('Y-m-d');
             $salesData[$date] = 0;
         }
-        
+
         // คำนวณยอดขายรายวัน
         $dailySales = Transaction::where('type', 'payment')
             ->where('status', 'successful')
@@ -52,17 +53,17 @@ class DashboardController extends Controller
             ->selectRaw('DATE(created_at) as date, SUM(amount) as total')
             ->groupBy('date')
             ->get();
-        
+
         foreach ($dailySales as $sale) {
             $salesData[$sale->date] = $sale->total;
         }
-        
+
         // ข้อมูลกราฟยอดขาย
         $salesChartData = [
             'labels' => array_keys($salesData),
             'data' => array_values($salesData),
         ];
-        
+
         return view('admin.dashboard', compact(
             'totalUsers',
             'totalSellers',
@@ -78,12 +79,25 @@ class DashboardController extends Controller
     /**
      * แสดงธุรกรรมทั้งหมด
      */
-    public function transactions()
+    public function transactions(Request $request)
     {
-        $transactions = Transaction::with(['user', 'order'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
-        
+        $query = Transaction::with(['user', 'order']);
+
+        // กรองตามประเภท
+        if ($request->has('type') && $request->type) {
+            $query->where('type', $request->type);
+        }
+
+        // กรองตามผู้ใช้ (ถ้ามี)
+        if ($request->has('user_id') && $request->user_id) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        // เรียงลำดับจากใหม่ไปเก่า
+        $query->orderBy('created_at', 'desc');
+
+        $transactions = $query->paginate(15);
+
         return view('admin.transactions', compact('transactions'));
     }
 }
