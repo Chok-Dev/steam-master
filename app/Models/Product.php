@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
@@ -20,8 +21,20 @@ class Product extends Model
         'status',
         'attributes',
         'views',
+        'key_data', // เพิ่มฟิลด์นี้
     ];
-
+    public function getDecryptedKeyAttribute()
+    {
+        if (!$this->key_data) {
+            return null;
+        }
+        
+        try {
+            return Crypt::decryptString($this->key_data);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
     protected $casts = [
         'attributes' => 'array',  // สำคัญ: cast attributes เป็น array
         'price' => 'decimal:2',

@@ -37,11 +37,42 @@ class PaymentController extends Controller
         // แจ้งเตือนผู้ขาย
         foreach ($order->orderItems as $item) {
             $seller = $item->product->user;
-            // ส่งแจ้งเตือนไปยังผู้ขาย (เช่น ผ่าน Notification)
+            if ($item->product->key_data) {
+                // ถ้าสินค้ามีรหัสเกมเตรียมไว้แล้ว ให้คัดลอกไปที่ OrderItem และเปลี่ยนสถานะเป็นส่งมอบแล้ว
+                $item->key_data = $item->product->key_data;
+                $item->status = 'delivered';
+                $item->delivered_at = now();
+                $item->save();
+
+                // เปลี่ยนสถานะสินค้าเป็นขายแล้ว
+                $item->product->status = 'sold';
+                $item->product->save();
+
+                // จ่ายเงินให้ผู้ขาย
+                $this->payToSeller($item);
+            }
         }
 
         return redirect()->route('orders.show', $order)
             ->with('success', 'ชำระเงินสำเร็จ! คุณจะได้รับรหัสเกมเมื่อผู้ขายยืนยันการชำระเงิน');
+    }
+    
+    private function payToSeller(OrderItem $item)
+    {
+        // สร้าง transaction สำหรับการจ่ายเงินให้ผู้ขาย
+        $transaction = new Transaction();
+        $transaction->order_id = $item->order_id;
+        $transaction->user_id = $item->product->user_id; // ผู้ขาย
+        $transaction->transaction_id = 'PO' . time();
+        $transaction->amount = $item->price * 0.95; // หักค่าคอมมิชชั่น 5%
+        $transaction->type = 'payout';
+        $transaction->status = 'successful';
+        $transaction->notes = 'จ่ายเงินให้ผู้ขายอัตโนมัติ (สินค้ามีรหัสพร้อมส่ง)';
+        $transaction->save();
+
+        // เพิ่มเงินเข้าบัญชีผู้ขาย
+        $seller = $item->product->user;
+        $seller->increment('balance', $transaction->amount);
     }
 
     public function escrowRelease(OrderItem $orderItem)

@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Crypt;
 
 class ProductController extends Controller
 {
@@ -44,6 +45,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'type' => 'required|string|in:steam_key,origin_key,gog_key,uplay_key,battlenet_key,account',
             'attributes' => 'nullable|array',
+            'key_data' => 'nullable|string',
         ]);
         
         $product = new Product();
@@ -56,6 +58,10 @@ class ProductController extends Controller
         $product->type = $request->type;
         $product->status = 'available';
         $product->attributes = $request->attributes;
+        if ($request->filled('key_data')) {
+            $product->key_data = Crypt::encryptString($request->key_data);
+        }
+
         $product->save();
         
         return redirect()->route('seller.products.index')
@@ -97,6 +103,7 @@ class ProductController extends Controller
             'type' => 'required|string|in:steam_key,origin_key,gog_key,uplay_key,battlenet_key,account',
             'status' => 'required|string|in:available,sold,pending',
             'attributes' => 'nullable|array',
+            'key_data' => 'nullable|string',
         ]);
         
         $product->category_id = $request->category_id;
@@ -106,6 +113,9 @@ class ProductController extends Controller
         $product->type = $request->type;
         $product->status = $request->status;
         $product->attributes = $request->attributes;
+        if ($request->filled('key_data')) {
+            $product->key_data = Crypt::encryptString($request->key_data);
+        }
         $product->save();
         
         return redirect()->route('seller.products.index')

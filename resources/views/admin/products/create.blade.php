@@ -122,7 +122,16 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                
+                <div class="mb-4">
+                    <label class="form-label" for="key_data">รหัสเกม/คีย์</label>
+                    <textarea class="form-control @error('key_data') is-invalid @enderror" id="key_data" name="key_data" rows="3" placeholder="ใส่รหัสเกม หรือข้อมูลบัญชีที่ต้องส่งให้ผู้ซื้อ"></textarea>
+                    <div class="form-text">
+                        <i class="fa fa-info-circle me-1"></i> รหัสนี้จะถูกเข้ารหัสเพื่อความปลอดภัยและจะถูกส่งให้ผู้ซื้อทันทีหลังชำระเงิน
+                    </div>
+                    @error('key_data')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
                 <h4 class="mt-4 mb-3">ข้อมูลเพิ่มเติม</h4>
                 
                 <div id="attributes-container">
