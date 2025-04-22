@@ -21,7 +21,9 @@ class Product extends Model
         'status',
         'attributes',
         'views',
-        'key_data', // เพิ่มฟิลด์นี้
+        'key_data',
+        'mafile_path',
+        'steam_auth_data' // เพิ่มฟิลด์นี้
     ];
     public function getDecryptedKeyAttribute()
     {

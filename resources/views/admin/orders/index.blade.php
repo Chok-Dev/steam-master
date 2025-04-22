@@ -193,7 +193,7 @@
 
             <!-- การแบ่งหน้า -->
             <div class="d-flex justify-content-center mt-4">
-                {{ $orders->appends(request()->except('page'))->links() }}
+                {{ $orders->appends(request()->except('page'))->links('pagination::bootstrap-4') }}
             </div>
         </div>
     </div>

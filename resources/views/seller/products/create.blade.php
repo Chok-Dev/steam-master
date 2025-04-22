@@ -105,7 +105,16 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                
+                <div class="mb-4">
+                    <label class="form-label" for="mafile">ไฟล์ Steam Guard (.mafile)</label>
+                    <input type="file" class="form-control @error('mafile') is-invalid @enderror" id="mafile" name="mafile" accept=".mafile">
+                    <div class="form-text">
+                        <i class="fa fa-info-circle me-1"></i> อัพโหลดไฟล์ .mafile เพื่อให้ผู้ซื้อสามารถรับรหัส Steam Guard ผ่านเว็บได้โดยตรง
+                    </div>
+                    @error('mafile')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
                 <h4 class="mt-4 mb-3">ข้อมูลเพิ่มเติม</h4>
                 
                 <div id="attributes-container">

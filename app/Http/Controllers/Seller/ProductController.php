@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -19,7 +20,7 @@ class ProductController extends Controller
         $products = auth()->user()->products()
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-        
+
         return view('seller.products.index', compact('products'));
     }
 
@@ -29,7 +30,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::all();
-        
+
         return view('seller.products.create', compact('categories'));
     }
 
@@ -47,7 +48,7 @@ class ProductController extends Controller
             'attributes' => 'nullable|array',
             'key_data' => 'nullable|string',
         ]);
-        
+
         $product = new Product();
         $product->user_id = auth()->id();
         $product->category_id = $request->category_id;
@@ -58,12 +59,33 @@ class ProductController extends Controller
         $product->type = $request->type;
         $product->status = 'available';
         $product->attributes = $request->attributes;
+        if ($request->hasFile('mafile')) {
+            $path = $request->file('mafile')->store('mafiles', 'private'); // ใช้ private disk เพื่อความปลอดภัย
+            $product->mafile_path = $path;
+
+            $mafileContent = file_get_contents($request->file('mafile')->path());
+            $mafileData = json_decode($mafileContent, true);
+
+            // ตรวจสอบว่าไฟล์มีรูปแบบถูกต้อง
+            if (isset($mafileData['shared_secret']) && isset($mafileData['account_name'])) {
+                // เก็บเฉพาะข้อมูลสำคัญที่จำเป็น
+                $steamAuthData = [
+                    'shared_secret' => $mafileData['shared_secret'],
+                    'account_name' => $mafileData['account_name'],
+                    'identity_secret' => $mafileData['identity_secret'] ?? null,
+                ];
+
+                // เข้ารหัสและบันทึก
+                $product->steam_auth_data = encrypt(json_encode($steamAuthData));
+            }
+        }
+
         if ($request->filled('key_data')) {
             $product->key_data = Crypt::encryptString($request->key_data);
         }
 
         $product->save();
-        
+
         return redirect()->route('seller.products.index')
             ->with('success', 'สร้างสินค้าใหม่เรียบร้อยแล้ว');
     }
@@ -78,9 +100,9 @@ class ProductController extends Controller
             return redirect()->route('seller.products.index')
                 ->with('error', 'คุณไม่มีสิทธิ์แก้ไขสินค้านี้');
         }
-        
+
         $categories = Category::all();
-        
+
         return view('seller.products.edit', compact('product', 'categories'));
     }
 
@@ -94,7 +116,7 @@ class ProductController extends Controller
             return redirect()->route('seller.products.index')
                 ->with('error', 'คุณไม่มีสิทธิ์แก้ไขสินค้านี้');
         }
-        
+
         $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
@@ -105,7 +127,7 @@ class ProductController extends Controller
             'attributes' => 'nullable|array',
             'key_data' => 'nullable|string',
         ]);
-        
+
         $product->category_id = $request->category_id;
         $product->name = $request->name;
         $product->description = $request->description;
@@ -116,8 +138,33 @@ class ProductController extends Controller
         if ($request->filled('key_data')) {
             $product->key_data = Crypt::encryptString($request->key_data);
         }
+        if ($request->hasFile('mafile')) {
+            if ($product->mafile_path) {
+                Storage::disk('private')->delete($product->mafile_path);
+            }
+            
+            // เก็บไฟล์ใหม่
+            $path = $request->file('mafile')->store('mafiles', 'private');
+            $product->mafile_path = $path;
+            
+            $mafileContent = file_get_contents($request->file('mafile')->path());
+            $mafileData = json_decode($mafileContent, true);
+
+            // ตรวจสอบว่าไฟล์มีรูปแบบถูกต้อง
+            if (isset($mafileData['shared_secret']) && isset($mafileData['account_name'])) {
+                // เก็บเฉพาะข้อมูลสำคัญที่จำเป็น
+                $steamAuthData = [
+                    'shared_secret' => $mafileData['shared_secret'],
+                    'account_name' => $mafileData['account_name'],
+                    'identity_secret' => $mafileData['identity_secret'] ?? null,
+                ];
+
+                // เข้ารหัสและบันทึก
+                $product->steam_auth_data = encrypt(json_encode($steamAuthData));
+            }
+        }
         $product->save();
-        
+
         return redirect()->route('seller.products.index')
             ->with('success', 'อัพเดทสินค้าเรียบร้อยแล้ว');
     }
@@ -132,15 +179,15 @@ class ProductController extends Controller
             return redirect()->route('seller.products.index')
                 ->with('error', 'คุณไม่มีสิทธิ์ลบสินค้านี้');
         }
-        
+
         // ตรวจสอบว่าสินค้ายังไม่ถูกขายหรือถูกจองแล้ว
         if ($product->status !== 'available') {
             return redirect()->route('seller.products.index')
                 ->with('error', 'ไม่สามารถลบสินค้าที่ถูกจองหรือขายแล้วได้');
         }
-        
+
         $product->delete();
-        
+
         return redirect()->route('seller.products.index')
             ->with('success', 'ลบสินค้าเรียบร้อยแล้ว');
     }

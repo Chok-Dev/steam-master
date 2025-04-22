@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="block-content">
-            <form action="{{ route('seller.products.update', $product) }}" method="POST">
+            <form action="{{ route('seller.products.update', $product) }}" method="POST" >
                 @csrf
                 @method('PUT')
                 
@@ -114,6 +114,16 @@
                         <i class="fa fa-info-circle me-1"></i> รหัสนี้จะถูกเข้ารหัสเพื่อความปลอดภัยและจะถูกส่งให้ผู้ซื้อทันทีหลังชำระเงิน
                     </div>
                     @error('key_data')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="mb-4">
+                    <label class="form-label" for="mafile">ไฟล์ Steam Guard (.mafile)</label>
+                    <input type="file" class="form-control @error('mafile') is-invalid @enderror" id="mafile" name="mafile" accept=".mafile">
+                    <div class="form-text">
+                        <i class="fa fa-info-circle me-1"></i> อัพโหลดไฟล์ .mafile เพื่อให้ผู้ซื้อสามารถรับรหัส Steam Guard ผ่านเว็บได้โดยตรง
+                    </div>
+                    @error('mafile')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

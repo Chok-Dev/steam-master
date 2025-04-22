@@ -39,7 +39,7 @@
                     <div class="mb-4">
                         <label class="form-label">&nbsp;</label>
                         <div class="d-flex">
-                            <button type="submit" class="btn btn-alt-primary w-100 me-2">
+                            <button type="submit" class="btn btn-alt-primary me-2">
                                 <i class="fa fa-search me-1"></i> แสดงรายงาน
                             </button>
                             <a href="{{ route('admin.reports.export.sales', request()->all()) }}" class="btn btn-alt-success">

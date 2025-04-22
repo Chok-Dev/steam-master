@@ -289,6 +289,16 @@
                           <i class="fa fa-key me-1"></i> รอรับรหัส
                         </button>
                       @endif
+                      @if ($item->status === 'delivered' && $item->product->mafile_path)
+                        <a href="{{ route('download.mafile', $item) }}" class="btn btn-sm btn-alt-success">
+                          <i class="fa fa-download me-1"></i> ดาวน์โหลดไฟล์ Steam Guard
+                        </a>
+                      @endif
+                      @if ($item->status === 'delivered' && $item->product->steam_auth_data)
+                        <a href="{{ route('steam-guard.show', $item) }}" class="btn btn-sm btn-alt-success">
+                          <i class="fa fa-key me-1"></i> รับรหัส Steam Guard
+                        </a>
+                      @endif
                     </td>
                   </tr>
                 @endforeach
