@@ -127,6 +127,9 @@
                           {{ $item->delivered_at->format('d/m/Y H:i') }}</div>
                       @elseif($item->status === 'canceled')
                         <span class="badge bg-danger">ยกเลิก</span>
+                      @elseif ($item->status === 'confirmed')
+                        <span class="badge bg-primary">ยืนยันแล้ว</span>
+                        <div class="fs-xs text-muted">{{ $item->confirmed_at->format('d/m/Y H:i') }}</div>
                       @else
                         <span class="badge bg-secondary">{{ $item->status }}</span>
                       @endif

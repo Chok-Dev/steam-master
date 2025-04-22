@@ -17,16 +17,24 @@ class OrderItem extends Model
         'status',
         'key_data',
         'delivered_at',
+        'confirmed_at',
+        'is_confirmed'
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'delivered_at' => 'datetime',
+        'confirmed_at' => 'datetime',
+        'is_confirmed' => 'boolean',
     ];
 
     /**
      * ความสัมพันธ์กับ Order
      */
+    public function getIsConfirmedAttribute()
+    {
+        return $this->confirmed_at !== null;
+    }
     public function order()
     {
         return $this->belongsTo(Order::class);

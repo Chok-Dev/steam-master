@@ -1,47 +1,151 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!doctype html>
+<html lang="en" class="remember-theme">
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+<head>
+  <meta charset="utf-8">
+  <!--
+      Available classes for <html> element:
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+      'dark'                  Enable dark mode - Default dark mode preference can be set in app.js file (always saved and retrieved in localStorage afterwards):
+                                window.Codebase = new App({ darkMode: "system" }); // "on" or "off" or "system"
+      'dark-custom-defined'   Dark mode is always set based on the preference in app.js file (no localStorage is used)
+      'remember-theme'        Remembers active color theme between pages using localStorage when set through
+                                - Theme helper buttons [data-toggle="theme"]
+    -->
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+  <title>Codebase - Bootstrap 5 Admin Template &amp; UI Framework</title>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+  <meta name="description" content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave">
+  <meta name="author" content="pixelcave">
+  <meta name="robots" content="index, follow">
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+  <!-- Open Graph Meta -->
+  <meta property="og:title" content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework">
+  <meta property="og:site_name" content="Codebase">
+  <meta property="og:description"
+    content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+  <!-- Icons -->
+  <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
+  <link rel="shortcut icon" href="{{ asset('media/favicons/favicon.png') }}">
+  <link rel="icon" sizes="192x192" type="image/png" href="{{ asset('media/favicons/favicon-192x192.png') }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('media/favicons/apple-touch-icon-180x180.png') }}">
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
+  <!-- Styles -->
+  @vite(['resources/sass/main.scss', 'resources/js/codebase/app.js'])
+
+
+  <script src="{{ asset('js/setTheme.js') }}"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'IBM Plex Sans Thai', sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="page-container" class="main-content-boxed">
+
+    <!-- Main Container -->
+    <main id="main-container">
+      <!-- Page Content -->
+      <div class="bg-body-dark">
+        <div class="hero-static content content-full px-1">
+          <div class="row mx-0 justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+              <!-- Header -->
+              <div class="py-4 text-center">
+                <a class="link-fx fw-bold" href="index.html">
+                  <i class="fa fa-fire"></i>
+                  <span class="fs-4 text-body-color">JDTC</span><span class="fs-4">HUB</span>
                 </a>
-            @endif
+                <h1 class="h3 fw-bold mt-4 mb-1">
+                  Welcome to Your Dashboard
+                </h1>
+                <h2 class="fs-5 lh-base fw-normal text-muted mb-0">
+                  It’s a great day today!
+                </h2>
+              </div>
+              <!-- END Header -->
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+              <!-- Sign In Form -->
+              <!-- jQuery Validation functionality is initialized with .js-validation-signin class in js/pages/op_auth_signin.min.js which was auto compiled from _js/pages/op_auth_signin.js -->
+              <!-- For more examples you can check out https://github.com/jzaefferer/jquery-validation -->
+              <form class="js-validation-signin" action="{{ route('login') }}" method="POST">
+                @csrf
+                <div class="block block-themed block-rounded block-fx-shadow">
+                  <div class="block-header bg-gd-dusk">
+                    <h3 class="block-title">Please Sign In</h3>
+                  </div>
+                  <div class="block-content">
+                    <div class="form-floating mb-4">
+                      <input type="text" class="form-control" id="email" name="email"
+                        placeholder="Enter your email" value="{{ old('email') }}">
+                      <label class="form-label" for="email">Email</label>
+                    </div>
+                    <div class="form-floating mb-4">
+                      <input type="password" class="form-control" id="password" name="password"
+                        placeholder="Enter your password">
+                      <label class="form-label" for="password">Password</label>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-6 d-sm-flex align-items-center push">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="login-remember-me"
+                            name="login-remember-me">
+                          <label class="form-check-label" for="login-remember-me">Remember Me</label>
+                        </div>
+                      </div>
+                      <div class="col-sm-6 text-sm-end push">
+                        <button type="submit" class="btn btn-lg btn-alt-primary fw-medium">
+                          Sign In
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="block-content block-content-full bg-body-light text-center d-flex justify-content-between">
+                    <a class="fs-sm fw-medium link-fx text-muted me-2 mb-1 d-inline-block" href="{{ route('register') }}">
+                      <i class="fa fa-plus opacity-50 me-1"></i> Create Account
+                    </a>
+                    @if (Route::has('password.request'))
+                      <a class="fs-sm fw-medium link-fx text-muted me-2 mb-1 d-inline-block"
+                        href="{{ route('password.request') }}">
+                        Forgot Password
+                      </a>
+                    @endif
+                  </div>
+                </div>
+              </form>
+              <!-- END Sign In Form -->
+            </div>
+          </div>
         </div>
-    </form>
-</x-guest-layout>
+      </div>
+      <!-- END Page Content -->
+    </main>
+    <!-- END Main Container -->
+  </div>
+  <!-- END Page Container -->
+
+  <!--
+        Codebase JS
+
+        Core libraries and functionality
+        webpack is putting everything together at assets/_js/main/app.js
+    -->
+
+  <!-- Page JS Plugins -->
+
+  <script src="{{ asset('js/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+
+
+</body>
+
+</html>

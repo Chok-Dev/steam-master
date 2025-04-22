@@ -164,17 +164,27 @@
                           {{ $item->delivered_at->format('d/m/Y H:i') }}</div>
                       @elseif($item->status === 'canceled')
                         <span class="badge bg-danger">ยกเลิก</span>
+                      @elseif ($item->status === 'confirmed')
+                        <span class="badge bg-primary">ยืนยันแล้ว</span>
+                        <div class="fs-xs text-muted">{{ $item->confirmed_at->format('d/m/Y H:i') }}</div>
                       @else
                         <span class="badge bg-secondary">{{ $item->status }}</span>
                       @endif
                     </td>
                     <td class="text-center">
-                      @if ($item->status === 'delivered' && $item->key_data)
+                      @if (($item->status === 'delivered' || $item->status === 'confirmed') && $item->key_data)
                         <button type="button" class="btn btn-sm btn-alt-primary" data-bs-toggle="modal"
                           data-bs-target="#modal-view-key-{{ $item->id }}">
                           <i class="fa fa-key me-1"></i> ดูรหัสเกม
                         </button>
-
+                        @if ($item->status === 'delivered' && !$item->is_confirmed && $order->user_id === auth()->id())
+                          <form action="{{ route('payments.release', $item) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-success">
+                              <i class="fa fa-check me-1"></i> ยืนยันการรับรหัสเกม
+                            </button>
+                          </form>
+                        @endif
                         <!-- Modal แสดงรหัสเกม -->
                         <div class="modal fade" id="modal-view-key-{{ $item->id }}" tabindex="-1" role="dialog"
                           aria-labelledby="modal-view-key-{{ $item->id }}" aria-hidden="true">

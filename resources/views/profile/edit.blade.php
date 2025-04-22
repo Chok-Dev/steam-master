@@ -24,7 +24,7 @@
                 <div class="block-content">
                     <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        @method('patch')
+                        @method('put')
                         
                         <div class="mb-4">
                             <label class="form-label" for="name">ชื่อผู้ใช้</label>

@@ -24,7 +24,13 @@ class Order extends Model
     /**
      * ความสัมพันธ์กับ User (ผู้ซื้อ)
      */
-    
+    public function allItemsConfirmed()
+    {
+        return $this->orderItems()->where(function ($query) {
+            $query->where('status', 'pending')
+                ->orWhere('status', 'delivered');
+        })->count() === 0;
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

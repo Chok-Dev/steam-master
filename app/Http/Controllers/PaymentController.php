@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -56,7 +57,7 @@ class PaymentController extends Controller
         return redirect()->route('orders.show', $order)
             ->with('success', 'ชำระเงินสำเร็จ! คุณจะได้รับรหัสเกมเมื่อผู้ขายยืนยันการชำระเงิน');
     }
-    
+
     private function payToSeller(OrderItem $item)
     {
         // สร้าง transaction สำหรับการจ่ายเงินให้ผู้ขาย
@@ -77,14 +78,34 @@ class PaymentController extends Controller
 
     public function escrowRelease(OrderItem $orderItem)
     {
-        // อัพเดทสถานะ order item เป็น delivered
+        // ตรวจสอบว่าผู้ใช้ปัจจุบันเป็นผู้ซื้อของ order นี้
+        if ($orderItem->order->user_id !== auth()->id()) {
+            return redirect()->back()->with('error', 'คุณไม่มีสิทธิ์ยืนยันรายการนี้');
+        }
+
+        // ตรวจสอบว่า order item อยู่ในสถานะที่ถูกส่งมอบแล้ว
+        if ($orderItem->status !== 'delivered') {
+            return redirect()->back()->with('error', 'รายการนี้ยังไม่พร้อมสำหรับการยืนยัน');
+        }
+
+        // ตรวจสอบว่ายังไม่ได้ยืนยันรับสินค้า
+        if ($orderItem->is_confirmed) {
+            return redirect()->back()->with('error', 'รายการนี้ได้รับการยืนยันแล้ว');
+        }
+
+        // อัพเดทสถานะ order item เป็น confirmed
         $orderItem->update([
-            'status' => 'delivered',
-            'delivered_at' => now()
+            'status' => 'confirmed',
+            'is_confirmed' => true,
+            'confirmed_at' => now()
         ]);
 
-        // ตรวจสอบว่าทุก item ใน order ถูกส่งมอบแล้วหรือไม่
-        $pendingItems = $orderItem->order->orderItems()->where('status', 'pending')->count();
+        // ตรวจสอบว่าทุก item ใน order ถูกยืนยันแล้วหรือไม่
+        $pendingItems = $orderItem->order->orderItems()->where(function ($query) {
+            $query->where('status', 'pending')
+                ->orWhere('status', 'delivered');
+        })->count();
+
         if ($pendingItems === 0) {
             $orderItem->order->update(['status' => 'completed']);
         }
@@ -97,12 +118,13 @@ class PaymentController extends Controller
         $transaction->amount = $orderItem->price * 0.95; // หักค่าคอมมิชชั่น 5%
         $transaction->type = 'payout';
         $transaction->status = 'successful';
+        $transaction->notes = 'จ่ายเงินให้ผู้ขายจากการยืนยันรับสินค้าของผู้ซื้อ';
         $transaction->save();
 
         // เพิ่มเงินเข้าบัญชีผู้ขาย
         $seller = $orderItem->product->user;
         $seller->increment('balance', $transaction->amount);
 
-        return redirect()->back()->with('success', 'การชำระเงินสำเร็จ! เงินได้ถูกโอนไปยังผู้ขายแล้ว');
+        return redirect()->back()->with('success', 'ยืนยันการรับรหัสเกมเรียบร้อยแล้ว เงินได้ถูกโอนไปยังผู้ขายแล้ว');
     }
 }

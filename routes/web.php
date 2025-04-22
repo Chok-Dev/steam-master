@@ -33,7 +33,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/checkout/{order}', [PaymentController::class, 'checkout'])->name('checkout');
     Route::post('/payments/process/{order}', [PaymentController::class, 'process'])->name('payments.process');
     Route::post('/payments/release/{orderItem}', [PaymentController::class, 'escrowRelease'])->name('payments.release');
-    
     // ข้อความ
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     Route::get('/messages/{user}', [MessageController::class, 'show'])->name('messages.show');
