@@ -294,9 +294,9 @@
                           <i class="fa fa-download me-1"></i> ดาวน์โหลดไฟล์ Steam Guard
                         </a>
                       @endif
-                      @if ($item->status === 'delivered' && $item->product->steam_auth_data)
+                      @if (($item->status === 'delivered' || $item->status === 'confirmed') && $item->product->steam_auth_data)
                         <a href="{{ route('steam-guard.show', $item) }}" class="btn btn-sm btn-alt-success">
-                          <i class="fa fa-key me-1"></i> รับรหัส Steam Guard
+                          <i class="fa fa-key me-1"></i>Steam Guard
                         </a>
                       @endif
                     </td>

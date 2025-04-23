@@ -47,6 +47,7 @@ class ProductController extends Controller
             'type' => 'required|string|in:steam_key,origin_key,gog_key,uplay_key,battlenet_key,account',
             'attributes' => 'nullable|array',
             'key_data' => 'nullable|string',
+            'mafile' => 'nullable|file|max:2048',
         ]);
 
         $product = new Product();
@@ -60,8 +61,8 @@ class ProductController extends Controller
         $product->status = 'available';
         $product->attributes = $request->attributes;
         if ($request->hasFile('mafile')) {
-            $path = $request->file('mafile')->store('mafiles', 'private'); // ใช้ private disk เพื่อความปลอดภัย
-            $product->mafile_path = $path;
+            /* $path = $request->file('mafile')->store('mafiles', 'private'); // ใช้ private disk เพื่อความปลอดภัย
+            $product->mafile_path = $path; */
 
             $mafileContent = file_get_contents($request->file('mafile')->path());
             $mafileData = json_decode($mafileContent, true);
@@ -126,6 +127,7 @@ class ProductController extends Controller
             'status' => 'required|string|in:available,sold,pending',
             'attributes' => 'nullable|array',
             'key_data' => 'nullable|string',
+            'mafile' => 'nullable|file|max:2048',
         ]);
 
         $product->category_id = $request->category_id;
@@ -139,14 +141,14 @@ class ProductController extends Controller
             $product->key_data = Crypt::encryptString($request->key_data);
         }
         if ($request->hasFile('mafile')) {
-            if ($product->mafile_path) {
+            /* if ($product->mafile_path) {
                 Storage::disk('private')->delete($product->mafile_path);
             }
             
             // เก็บไฟล์ใหม่
             $path = $request->file('mafile')->store('mafiles', 'private');
-            $product->mafile_path = $path;
-            
+            $product->mafile_path = $path; */
+
             $mafileContent = file_get_contents($request->file('mafile')->path());
             $mafileData = json_decode($mafileContent, true);
 

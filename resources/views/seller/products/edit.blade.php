@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="block-content">
-            <form action="{{ route('seller.products.update', $product) }}" method="POST" >
+            <form action="{{ route('seller.products.update', $product) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 
