@@ -41,7 +41,7 @@
 </head>
 
 <body>
-    <div id="page-loader" class="show"></div>
+  
     <!-- Page Container -->
     <div id="page-container" class="sidebar-o enable-page-overlay side-scroll page-header-modern main-content-narrow">
         <!-- Side Overlay-->
@@ -392,7 +392,7 @@
                                             </li>
 
                                             <li class="nav-main-item">
-                                                <a class="nav-main-link{{ request()->routeIs('admin.users.index') && !request('role') ? ' active' : '' }}"
+                                                <a class="nav-main-link{{ request()->routeIs('admin.users.index') && request('role') == 'admin' ? ' active' : '' }}"
                                                     href="{{ route('admin.users.index') }}">
                                                     <span class="nav-main-link-name">ผู้ใช้ทั้งหมด</span>
                                                 </a>
@@ -882,10 +882,10 @@
                         <a class="fw-semibold" href="#">JDTC HUB</a> &copy; <span
                             data-toggle="year-copy"></span>
                     </div>
-                    <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-start">
+                    {{-- <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-start">
                         <a class="fw-semibold" href="#">JDTC HUB</a> &copy; <span
                             data-toggle="year-copy"></span>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </footer>

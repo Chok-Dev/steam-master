@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        /* User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
@@ -48,7 +48,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'user',
             'is_verified' => true,
             'balance' => 2000.00,
-        ]);
+        ]); */
 
         // ข้อมูลหมวดหมู่
         $categories = [
@@ -66,7 +66,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // สร้างข้อมูลสินค้า
-        $products = [
+        /* $products = [
             [
                 'user_id' => $seller->id,
                 'category_id' => 1, // Action
@@ -376,6 +376,6 @@ class DatabaseSeeder extends Seeder
                     'updated_at' => $date,
                 ]);
             }
-        }
+        } */
     }
 }

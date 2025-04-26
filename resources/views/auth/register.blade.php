@@ -85,9 +85,9 @@
                                     </div>
                                     <div class="block-content">
                                         <div class="form-floating mb-4">
-                                            <input type="text" class="form-control" id="signup-name"
-                                                name="signup-name" value="{{ old('name') }}" placeholder="Enter your name" required autofocus>
-                                            <label class="form-label" for="signup-name">name</label>
+                                            <input type="text" class="form-control" id="name"
+                                                name="name" value="{{ old('name') }}" placeholder="Enter your name" required autofocus>
+                                            <label class="form-label" for="name">name</label>
                                         </div>
                                         <div class="form-floating mb-4">
                                             <input type="email" class="form-control" id="email"
