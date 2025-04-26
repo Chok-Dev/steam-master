@@ -14,17 +14,17 @@
     -->
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-  <title>Codebase - Bootstrap 5 Admin Template &amp; UI Framework</title>
+  <title>JDTC HUB - LOGIN</title>
 
-  <meta name="description" content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave">
+  <meta name="description" content="JDTC HUB - LOGIN">
   <meta name="author" content="pixelcave">
   <meta name="robots" content="index, follow">
 
   <!-- Open Graph Meta -->
-  <meta property="og:title" content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework">
+  <meta property="og:title" content="JDTC HUB - LOGIN">
   <meta property="og:site_name" content="Codebase">
   <meta property="og:description"
-    content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave">
+    content="JDTC HUB - LOGIN">
   <meta property="og:type" content="website">
   <meta property="og:url" content="">
   <meta property="og:image" content="">
@@ -66,7 +66,7 @@
                   <span class="fs-4 text-body-color">JDTC</span><span class="fs-4">HUB</span>
                 </a>
                 <h1 class="h3 fw-bold mt-4 mb-1">
-                  Welcome to Your Dashboard
+                 ยินดีตอนรับ
                 </h1>
                 <h2 class="fs-5 lh-base fw-normal text-muted mb-0">
                   It’s a great day today!
@@ -81,7 +81,7 @@
                 @csrf
                 <div class="block block-themed block-rounded block-fx-shadow">
                   <div class="block-header bg-gd-dusk">
-                    <h3 class="block-title">Please Sign In</h3>
+                    <h3 class="block-title">กรุณาเข้าสู่ระบบ</h3>
                   </div>
                   <div class="block-content">
                     <div class="form-floating mb-4">
@@ -99,12 +99,12 @@
                         <div class="form-check">
                           <input class="form-check-input" type="checkbox" value="" id="login-remember-me"
                             name="login-remember-me">
-                          <label class="form-check-label" for="login-remember-me">Remember Me</label>
+                          <label class="form-check-label" for="login-remember-me">จดจำฉัน</label>
                         </div>
                       </div>
                       <div class="col-sm-6 text-sm-end push">
                         <button type="submit" class="btn btn-lg btn-alt-primary fw-medium">
-                          Sign In
+                          เข้าสู่ระบบ
                         </button>
                       </div>
                     </div>
@@ -112,14 +112,14 @@
                   <div
                     class="block-content block-content-full bg-body-light text-center d-flex justify-content-between">
                     <a class="fs-sm fw-medium link-fx text-muted me-2 mb-1 d-inline-block" href="{{ route('register') }}">
-                      <i class="fa fa-plus opacity-50 me-1"></i> Create Account
+                      <i class="fa fa-plus opacity-50 me-1"></i> สมัครสมาชิก
                     </a>
-                    @if (Route::has('password.request'))
+                    {{-- @if (Route::has('password.request'))
                       <a class="fs-sm fw-medium link-fx text-muted me-2 mb-1 d-inline-block"
                         href="{{ route('password.request') }}">
                         Forgot Password
                       </a>
-                    @endif
+                    @endif --}}
                   </div>
                 </div>
               </form>

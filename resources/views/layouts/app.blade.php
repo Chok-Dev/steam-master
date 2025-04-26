@@ -6,18 +6,18 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <title>{{ config('app.name', 'Steam Marketplace') }} - @yield('title', 'หน้าหลัก')</title>
+  <title>{{ config('app.name', 'JDTC HUB') }} - @yield('title', 'หน้าหลัก')</title>
 
   <!-- Icons -->
-  <meta name="description" content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave">
+  <meta name="description" content="JDTC HUB Good Product">
   <meta name="author" content="pixelcave">
   <meta name="robots" content="index, follow">
 
   <!-- Open Graph Meta -->
-  <meta property="og:title" content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework">
+  <meta property="og:title" content="JDTC HUB &amp;Steam Account">
   <meta property="og:site_name" content="Codebase">
   <meta property="og:description"
-    content="Codebase - Bootstrap 5 Admin Template &amp; UI Framework created by pixelcave">
+    content="JDTC HUB Good Product">
   <meta property="og:type" content="website">
   <meta property="og:url" content="">
   <meta property="og:image" content="">
@@ -43,7 +43,7 @@
 
 <body>
   <!-- Page Container -->
-  <div id="page-container" class="sidebar-o enable-page-overlay side-scroll page-header-modern main-content-boxed">
+  <div id="page-container" class="sidebar-o enable-page-overlay side-scroll page-header-modern main-content-narrow">
     <!-- Side Overlay-->
     <aside id="side-overlay">
       <!-- Side Header -->
@@ -157,12 +157,12 @@
           <!-- Logo -->
           <div>
             <span class="smini-visible fw-bold tracking-wide fs-lg">
-              <span class="text-primary">S</span><span class="text-dual">M</span>
+              <span class="text-primary">J</span><span class="text-dual">H</span>
             </span>
             <a class="link-fx fw-bold tracking-wide mx-auto" href="{{ route('home') }}">
               <span class="smini-hidden">
                 <i class="fa fa-fire text-primary"></i>
-                <span class="fs-4 text-dual">Steam</span><span class="fs-4 text-primary">Market</span>
+                <span class="fs-4 text-dual">JDTC</span><span class="fs-4 text-primary">HUB</span>
               </span>
             </a>
           </div>
@@ -835,10 +835,10 @@
       <div class="content py-3">
         <div class="row fs-sm">
           <div class="col-sm-6 order-sm-2 py-1 text-center text-sm-end">
-            <a class="fw-semibold" href="#">Steam Market</a> &copy; <span data-toggle="year-copy"></span>
+            <a class="fw-semibold" href="#">JDTC HUB</a> &copy; <span data-toggle="year-copy"></span>
           </div>
           <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-start">
-            <a class="fw-semibold" href="#">Steam Market</a> &copy; <span data-toggle="year-copy"></span>
+            <a class="fw-semibold" href="#">JDTC HUB</a> &copy; <span data-toggle="year-copy"></span>
           </div>
         </div>
       </div>

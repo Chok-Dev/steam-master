@@ -23,13 +23,15 @@
                 <div class="col-md-4">
                     <div class="mb-4">
                         <label class="form-label" for="start_date">วันที่เริ่มต้น</label>
-                        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ request('start_date', $startDate->format('Y-m-d')) }}">
+                        <input type="date" class="form-control" id="start_date" name="start_date"
+                            value="{{ request('start_date', $startDate->format('Y-m-d')) }}">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="mb-4">
                         <label class="form-label" for="end_date">วันที่สิ้นสุด</label>
-                        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ request('end_date', $endDate->format('Y-m-d')) }}">
+                        <input type="date" class="form-control" id="end_date" name="end_date"
+                            value="{{ request('end_date', $endDate->format('Y-m-d')) }}">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -87,7 +89,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- กราฟและสถิติ -->
     <div class="row">
         <div class="col-md-8">
@@ -102,7 +104,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
             <div class="block block-rounded">
                 <div class="block-header block-header-default">
@@ -116,7 +118,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row">
         <div class="col-md-6">
             <div class="block block-rounded">
@@ -155,7 +157,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-6">
             <div class="block block-rounded">
                 <div class="block-header block-header-default">
@@ -197,83 +199,84 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/plugins/chart.js/chart.umd.js') }}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // กราฟยอดขาย
-        var salesCtx = document.getElementById('sales-chart').getContext('2d');
-        var salesChart = new Chart(salesCtx, {
-            type: 'line',
-            data: {
-                labels: @json(array_keys($dailySales)),
-                datasets: [{
-                    label: 'ยอดขาย (บาท)',
-                    backgroundColor: 'rgba(78, 115, 223, 0.05)',
-                    borderColor: 'rgba(78, 115, 223, 1)',
-                    data: @json(array_values($dailySales)),
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
+    <script src="{{ asset('js/plugins/chart.js/chart.umd.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // กราฟยอดขาย
+            var salesCtx = document.getElementById('sales-chart').getContext('2d');
+            var salesChart = new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: @json(array_keys($dailySales)),
+                    datasets: [{
+                        label: 'ยอดขาย (บาท)',
+                        backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        data: @json(array_values($dailySales)),
+                        tension: 0.3,
+                        fill: true
+                    }]
                 },
-                scales: {
-                    x: {
-                        grid: {
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
                             display: false
                         }
                     },
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
                         }
                     }
                 }
-            }
-        });
-        
-        // กราฟออเดอร์
-        var ordersCtx = document.getElementById('orders-chart').getContext('2d');
-        var ordersChart = new Chart(ordersCtx, {
-            type: 'line',
-            data: {
-                labels: @json(array_keys($dailyOrders)),
-                datasets: [{
-                    label: 'จำนวนออเดอร์',
-                    backgroundColor: 'rgba(28, 200, 138, 0.05)',
-                    borderColor: 'rgba(28, 200, 138, 1)',
-                    data: @json(array_values($dailyOrders)),
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
+            });
+
+            // กราฟออเดอร์
+            var ordersCtx = document.getElementById('orders-chart').getContext('2d');
+            var ordersChart = new Chart(ordersCtx, {
+                type: 'line',
+                data: {
+                    labels: @json(array_keys($dailyOrders)),
+                    datasets: [{
+                        label: 'จำนวนออเดอร์',
+                        backgroundColor: 'rgba(28, 200, 138, 0.05)',
+                        borderColor: 'rgba(28, 200, 138, 1)',
+                        data: @json(array_values($dailyOrders)),
+                        tension: 0.3,
+                        fill: true
+                    }]
                 },
-                scales: {
-                    x: {
-                        grid: {
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
                             display: false
+                        }
                     },
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            }
                         }
                     }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>
 @endpush
