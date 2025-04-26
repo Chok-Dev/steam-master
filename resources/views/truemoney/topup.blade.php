@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'เติมเงิน TrueMoney')
-@section('subtitle', 'เพิ่มยอดเงินด้วยซองอั่งเปา TrueMoney')
+@section('subtitle', 'เพิ่มยอปเงินด้วยซองอั่งเปา TrueMoney')
 @section('breadcrumb')
   <li class="breadcrumb-item">
     <a href="{{ route('home') }}">หน้าหลัก</a>

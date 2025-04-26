@@ -18,6 +18,43 @@ class ProfileController extends Controller
     /**
      * Display the user's profile.
      */
+    /**
+     * Show the seller request form.
+     */
+    public function sellerRequest(Request $request): View
+    {
+        return view('profile.seller-request', [
+            'user' => $request->user(),
+        ]);
+    }
+
+    /**
+     * Store a seller request.
+     */
+    public function storeSellerRequest(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'seller_name' => 'required|string|max:255',
+            'seller_description' => 'required|string|min:50',
+            'accept_terms' => 'required|accepted',
+        ]);
+
+        // Update user with seller request information
+        $user = $request->user();
+        $user->seller_request_status = 'pending';
+        $user->seller_request_at = now();
+        $user->seller_details = [
+            'name' => $request->seller_name,
+            'description' => $request->seller_description,
+        ];
+        $user->save();
+
+        // Notify admin (you would implement this part based on your notification system)
+        // For example: Notification::send(User::where('role', 'admin')->get(), new SellerRequestNotification($user));
+
+        return redirect()->route('profile.edit')
+            ->with('success', 'คำขอเป็นผู้ขายถูกส่งเรียบร้อยแล้ว กรุณารอการอนุมัติจากผู้ดูแลระบบ');
+    }
     public function show(Request $request, $username = null): View
     {
         // ถ้าไม่มีการระบุ username ให้แสดงโปรไฟล์ของผู้ใช้ที่เข้าสู่ระบบ

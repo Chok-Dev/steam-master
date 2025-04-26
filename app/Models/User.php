@@ -23,6 +23,9 @@ class User extends Authenticatable
         'is_verified',
         'balance',
         'last_active_at',
+        'seller_request_status',
+        'seller_request_at',
+        'seller_details'
     ];
 
     protected $hidden = [

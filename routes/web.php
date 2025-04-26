@@ -33,6 +33,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/api/orders/{orderItem}/steam-guard-code', [SteamGuardController::class, 'getCode'])
         ->name('steam-guard.code');
     // โปรไฟล์
+    // Add this to the auth middleware group
+    Route::get('/seller-request', [ProfileController::class, 'sellerRequest'])->name('seller.request');
+    Route::post('/seller-request', [ProfileController::class, 'storeSellerRequest'])->name('seller.request.store');
+
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -43,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/products/{product}/buy', [OrderController::class, 'buy'])->name('products.buy');
     // การชำระเงิน
     Route::get('/topup', [PaymentController::class, 'toupIndex'])->name('topup');
+    Route::get('/topup/history', [PaymentController::class, 'topupHistory'])->name('topup.history');
     Route::get('/topup/truewallet', [PaymentController::class, 'toupTruemoney'])->name('toupTruemoney');
     Route::get('/topup/chillpay', [PaymentController::class, 'toupChillpay'])->name('toupChillpay');
     Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
@@ -78,7 +83,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', App\Http\Controllers\Admin\UserController::class);
     Route::post('/users/{user}/toggle-verification', [App\Http\Controllers\Admin\UserController::class, 'toggleVerification'])->name('users.toggle-verification');
     Route::post('/users/{user}/adjust-balance', [App\Http\Controllers\Admin\UserController::class, 'adjustBalance'])->name('users.adjust-balance');
-
+    // Add these inside the admin middleware group
+    Route::get('/seller-requests', [App\Http\Controllers\Admin\UserController::class, 'sellerRequests'])->name('seller-requests.index');
+    Route::post('/seller-requests/{user}/approve', [App\Http\Controllers\Admin\UserController::class, 'approveSellerRequest'])->name('seller-requests.approve');
+    Route::post('/seller-requests/{user}/reject', [App\Http\Controllers\Admin\UserController::class, 'rejectSellerRequest'])->name('seller-requests.reject');
     // จัดการสินค้า
     Route::resource('/products', App\Http\Controllers\Admin\ProductController::class);
     Route::post('/products/{product}/change-status', [App\Http\Controllers\Admin\ProductController::class, 'changeStatus'])->name('products.change-status');

@@ -129,7 +129,7 @@
               </div>
 
               <div class="text-center mt-4">
-                <a href="" class="btn btn-alt-info">
+                <a href="{{ route('topup.history') }}" class="btn btn-alt-info">
                   <i class="fa fa-history me-1"></i> ดูประวัติการเติมเงิน
                 </a>
               </div>

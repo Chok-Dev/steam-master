@@ -13,6 +13,18 @@ use Illuminate\Support\Str;
 class PaymentController extends Controller
 {
     // แสดงหน้าชำระเงิน
+    public function topupHistory()
+    {
+        $user = auth()->user();
+
+        // Get all topup and payment transactions for the current user
+        $transactions = Transaction::where('user_id', $user->id)
+            ->whereIn('type', ['topup', 'payment'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('truemoney.history', compact('transactions'));
+    }
     public function checkout(Request $request)
     {
         // ตรวจสอบว่ามี product_id ที่ต้องการซื้อใน session หรือไม่
@@ -106,10 +118,12 @@ class PaymentController extends Controller
             // 6. ถ้าสินค้ามีรหัสเกมเตรียมไว้แล้ว ให้ส่งมอบทันที
             if ($product->key_data) {
                 $orderItem->key_data = $product->key_data;
-                $orderItem->status = 'delivered';
+                $orderItem->status = 'confirmed';
                 $orderItem->delivered_at = now();
+                $orderItem->confirmed_at = now();
                 $orderItem->save();
-
+                $order->status = 'completed'; // เปลี่ยนเป็น processing เลยเพราะชำระเงินแล้ว
+                $order->save();
                 // เปลี่ยนสถานะสินค้าเป็นขายแล้ว
                 $product->status = 'sold';
                 $product->save();
@@ -206,6 +220,8 @@ class PaymentController extends Controller
     {
         return view('truemoney.index');
     }
+
+    
     public function toupTruemoney()
     {
         return view('truemoney.topup');
