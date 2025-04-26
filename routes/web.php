@@ -26,7 +26,7 @@ Route::get('/search', [ProductController::class, 'search'])->name('products.sear
 
 // ต้องล็อกอินก่อน
 Route::middleware(['auth'])->group(function () {
-   
+
 
     Route::get('/orders/{orderItem}/steam-guard', [SteamGuardController::class, 'showSteamGuard'])
         ->name('steam-guard.show');
@@ -41,16 +41,15 @@ Route::middleware(['auth'])->group(function () {
     // ออเดอร์
     Route::resource('orders', OrderController::class);
     Route::post('/products/{product}/buy', [OrderController::class, 'buy'])->name('products.buy');
-
     // การชำระเงิน
     Route::get('/topup', [PaymentController::class, 'toupIndex'])->name('topup');
     Route::get('/topup/truewallet', [PaymentController::class, 'toupTruemoney'])->name('toupTruemoney');
     Route::get('/topup/chillpay', [PaymentController::class, 'toupChillpay'])->name('toupChillpay');
-    Route::get('/checkout/{order}', [PaymentController::class, 'checkout'])->name('checkout');
-    Route::get('/checkout/{order}', [PaymentController::class, 'checkout'])->name('checkout');
+    Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
+    Route::post('/payments/process', [PaymentController::class, 'process'])->name('payments.process');
 
-    Route::get('/checkout/{order}', [PaymentController::class, 'checkout'])->name('checkout');
-    Route::post('/payments/process/{order}', [PaymentController::class, 'process'])->name('payments.process');
+    Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
+    Route::post('/payments/process', [PaymentController::class, 'process'])->name('payments.process');
     Route::post('/payments/release/{orderItem}', [PaymentController::class, 'escrowRelease'])->name('payments.release');
     // ข้อความ
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');

@@ -47,29 +47,12 @@ class OrderController extends Controller
         if ($product->status !== 'available') {
             return redirect()->route('products.show', $product)->with('error', 'สินค้านี้ไม่พร้อมขายในขณะนี้');
         }
-
-        // สร้างออเดอร์ใหม่
-        $order = new Order();
-        $order->user_id = auth()->id();
-        $order->order_number = 'ORD-' . Str::random(10);
-        $order->total_amount = $product->price;
-        $order->status = 'pending';
-        $order->save();
-
-        // สร้าง order item
-        $orderItem = new OrderItem();
-        $orderItem->order_id = $order->id;
-        $orderItem->product_id = $product->id; // แก้ไขตรงนี้จาก $product->product_id เป็น $product->id
-        $orderItem->price = $product->price;
-        $orderItem->status = 'pending';
-        $orderItem->save();
-
-        // อัพเดทสถานะสินค้า
-        $product->status = 'pending';
-        $product->save();
-
-        // ไปที่หน้าชำระเงิน
-        return redirect()->route('checkout', $order);
+        
+        // เก็บข้อมูลสินค้าที่จะซื้อลงใน session
+        session(['product_to_buy' => $product->id]);
+        
+        // ส่งต่อไปยังหน้าชำระเงิน
+        return redirect()->route('checkout');
     }
 
     public function destroy(Order $order)
@@ -109,4 +92,5 @@ class OrderController extends Controller
             return redirect()->back()->with('error', 'เกิดข้อผิดพลาดในการลบออเดอร์: ' . $e->getMessage());
         }
     }
+
 }
