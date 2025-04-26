@@ -16,7 +16,7 @@
 @section('content')
     <!-- นโยบายการเติมเงิน -->
    
-        <div class="block block-rounded">
+        {{-- <div class="block block-rounded">
             <div class="block-header block-header-default">
                 <h3 class="block-title">นโยบายการเติมเงิน</h3>
             </div>
@@ -44,7 +44,7 @@
                     </button>
                 </form>
             </div>
-        </div>
+        </div> --}}
    
         <div class="row">
             <div class="col-md-7">
@@ -61,11 +61,12 @@
                                 <div class="flex-grow-1 ms-3">
                                     <h5>เติมเงินได้หลากหลายช่องทาง</h5>
                                     <p class="mb-0">ระบบ ChillPay รองรับการชำระเงินผ่านบัตรเครดิต/เดบิต, QR Payment, โอนผ่านธนาคาร และอื่นๆ</p>
+                                    <p class="mb-0">ค่าธรรมเนียม 2.9% ขั้นต่ำ 15 บาท</p>
                                 </div>
                             </div>
                         </div>
                         
-                        <form action="" method="POST">
+                        <form action="{{ route('topup.chillpay.process') }}" method="POST">
                             @csrf
                             <div class="mb-4">
                                 <label class="form-label" for="amount">จำนวนเงินที่ต้องการเติม (บาท)</label>
@@ -77,7 +78,7 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                                 <div class="form-text">
-                                    <i class="fa fa-info-circle me-1"></i> จำนวนเงินขั้นต่ำ 20 บาท
+                                    <i class="fa fa-info-circle me-1"></i> จำนวนเงินขั้นต่ำ 20 บาท | ค่าธรรมเนียม 2.9% ขั้นต่ำ 15 บาท
                                 </div>
                             </div>
                             
@@ -105,7 +106,7 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-credit-card me-1"></i> ดำเนินการเติมเงิน
                                 </button>
-                                <a href="" class="btn btn-alt-secondary">
+                                <a href="{{ route('toupTruemoney') }}" class="btn btn-alt-secondary">
                                     <i class="fa fa-wallet me-1"></i> เติมด้วย TrueMoney
                                 </a>
                             </div>

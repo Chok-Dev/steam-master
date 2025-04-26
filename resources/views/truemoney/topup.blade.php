@@ -32,7 +32,7 @@
             </div>
           </div>
 
-          <form action="" method="POST">
+          <form action="{{ route('topup.truemoney.process') }}" method="POST">
             @csrf
             <div class="mb-4">
               <label class="form-label" for="voucher">ลิงก์ซองอั่งเปา TrueMoney</label>
@@ -107,7 +107,7 @@
           </div>
 
           <div class="text-center mt-4">
-            <a href="" class="btn btn-alt-primary">
+            <a href="{{ route('toupChillpay') }}" class="btn btn-alt-primary">
               <i class="fa fa-credit-card me-1"></i> เติมเงินด้วยวิธีอื่น (ChillPay)
             </a>
           </div>

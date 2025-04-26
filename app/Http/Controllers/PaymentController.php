@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\OrderItem;
 use App\Models\Transaction;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
@@ -220,8 +222,127 @@ class PaymentController extends Controller
     {
         return view('truemoney.index');
     }
+    public function processTruemoneyTopup(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
 
-    
+            'voucher' => 'required|url'
+        ], [
+            'voucher.required' => '* กรุณาใส่ลิ้งค์ซองอั่งเปา',
+            'voucher.url' => '* รูปแบบซองอั่งเปาไม่ถูกต้อง',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        // ดึงรหัสซองอั่งเปาจาก URL
+        preg_match("/([^?&=#]+)=([^&#]*)/", str_replace(' ', '', $request->voucher), $code);
+        if (!isset($code[2])) {
+            return back()->with('error', 'รูปแบบซองอั่งเปาไม่ถูกต้อง');
+        }
+
+        $code = $code[2];
+        $phoneNumber = env('TRUEMONEY_PHONE', '0934278023'); // เบอร์โทรที่รับซองอั่งเปา
+
+        // ข้อมูลสำหรับส่งไปยัง TrueMoney API
+        $header = [
+            "content-type:application/json"
+        ];
+        $data = '{"mobile":"' . $phoneNumber . '","voucher_hash":"' . $code . '"}';
+
+        // เริ่ม transaction เพื่อความปลอดภัยของข้อมูล
+        DB::beginTransaction();
+
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, 'https://gift.truemoney.com/campaign/vouchers/' . $code . '/redeem');
+            curl_setopt($ch, CURLOPT_USERAGENT, 'okhttp/3.8.0');
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_COOKIESESSION, true);
+            curl_setopt($ch, CURLOPT_COOKIEJAR, 'COOKIE.TXT');
+            curl_setopt($ch, CURLOPT_COOKIEFILE, 'COOKIE.TXT');
+
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode != 200) {
+                throw new \Exception('TrueMoney API response error: HTTP ' . $httpCode);
+            }
+
+            $result = json_decode($response);
+
+            if (!$result || !isset($result->status) || !isset($result->status->code)) {
+                throw new \Exception('Invalid response from TrueMoney API');
+            }
+
+            switch ($result->status->code) {
+                case "SUCCESS":
+                    // เติมเงินสำเร็จ
+                    $amount = $result->data->voucher->amount_baht;
+                    $user = auth()->user();
+
+                    // เพิ่มเงินในวอลเล็ต
+                    $user->increment('balance', $amount);
+
+                    // บันทึกธุรกรรม
+                    $order = new Order();
+                    $order->user_id = $user->id;
+                    $order->order_number = 'ORD-' . Str::random(10);
+                    $order->total_amount = $amount;
+                    $order->status = 'completed'; // เปลี่ยนเป็น processing เลยเพราะชำระเงินแล้ว
+                    $order->save();
+
+                    $transaction = new Transaction();
+                    $transaction->order_id = $order->id;
+                    $transaction->user_id = $user->id;
+                    $transaction->transaction_id = 'TM' . time();
+                    $transaction->amount = $amount;
+                    $transaction->type = 'topup';
+                    $transaction->status = 'successful';
+                    $transaction->payment_details = [
+                        'method' => 'truemoney_voucher',
+                        'voucher_code' => $code,
+                        'time' => now()->toDateTimeString(),
+                    ];
+                    $transaction->save();
+
+                    DB::commit();
+                    return redirect()->route('topup')->with('success', 'เติมเงินสำเร็จ! คุณได้รับเงิน ' . number_format($amount, 2) . ' บาท');
+
+                case "CANNOT_GET_OWN_VOUCHER":
+                    return back()->with('error', 'ไม่สามารถรับอั่งเปาตัวเองได้');
+
+                case "TARGET_USER_NOT_FOUND":
+                    return back()->with('error', 'เบอร์ผู้รับไม่ถูกต้อง');
+
+                case "INTERNAL_ERROR":
+                    return back()->with('error', 'URL ไม่ถูกต้อง');
+
+                case "VOUCHER_OUT_OF_STOCK":
+                    return back()->with('error', 'อั่งเปาถูกใช้งานไปแล้ว');
+
+                case "VOUCHER_NOT_FOUND":
+                    return back()->with('error', 'ไม่พบข้อมูลอั่งเปานี้');
+
+                case "VOUCHER_EXPIRED":
+                    return back()->with('error', 'อั่งเปาหมดอายุการใช้งานแล้ว');
+
+                default:
+                    return back()->with('error', 'เกิดข้อผิดพลาด: ' . ($result->status->message ?? 'ไม่ทราบสาเหตุ'));
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'เกิดข้อผิดพลาดในการเติมเงิน: ' . $e->getMessage());
+        }
+    }
+
     public function toupTruemoney()
     {
         return view('truemoney.topup');
@@ -230,4 +351,110 @@ class PaymentController extends Controller
     {
         return view('truemoney.topupchillpay');
     }
+
+
+    public function processChillpay(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'amount' => 'required|numeric|min:20'
+        ], [
+            'amount.required' => '* กรุณาใส่จำนวนเงิน',
+            'amount.min' => '* จำนวนเงินขั้นต่ำ 20 บาท',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        // ข้อมูลสำหรับการทำธุรกรรม ChillPay
+        $merchantCode = env('CHILLPAY_MERCHANT_CODE', '');
+        $orderNo = 'TP' . time() . auth()->id();
+        $customerId = auth()->id();
+        $amount = ($request->amount * 100); // แปลงเป็นสตางค์
+        $description = 'เติมเงินเข้ากระเป๋า ' . auth()->user()->name;
+        $currency = '764'; // รหัสสกุลเงินบาทไทย
+        $langCode = 'TH';
+        $routeNo = '1';
+        $ipAddress = $request->ip();
+        $apiKey = env('CHILLPAY_API_KEY', '');
+        $secretKey = env('CHILLPAY_SECRET_KEY', '');
+
+        // สร้าง CheckSum
+        $checksumString = 
+            $merchantCode . $orderNo . $customerId . $amount .
+            $description . $currency . $langCode . $routeNo .
+            $ipAddress . $apiKey .
+            $secretKey;
+
+        $checksum = md5($checksumString);
+        
+
+        // ส่งข้อมูลไปยัง view
+        return view('chillpay', [
+            'merchantCode' => $merchantCode,
+            'orderNo' => $orderNo,
+            'customerId' => $customerId,
+            'amount' => $amount,
+            'description' => $description,
+            'currency' => $currency,
+            'langCode' => $langCode,
+            'routeNo' => $routeNo,
+            'ipAddress' => $ipAddress,
+            'apiKey' => $apiKey,
+            'checksum' => $checksum
+        ]);
+    }
+    
+    function webhookResult(Request $request)
+    {
+        /* dd($request); */
+        try {
+            if ($request["respCode"] == 0) {
+                return redirect()->route('topup.history');
+            } elseif ($request["respCode"] == 2) {
+                return redirect()->route('home');
+            } elseif ($request["respCode"] == 3) {
+                return redirect()->route('home');
+            }
+        } catch (\Exception $e) {
+
+            /* return redirect()->back(); */
+        }
+    }
+    public function chillpayCallback(Request $request)
+    {
+        // ตรวจสอบความถูกต้องของข้อมูลที่ได้รับจาก ChillPay
+        if ($request["PaymentStatus"] == 0) {
+            DB::beginTransaction();
+            try {
+                User::find($request["CustomerId"])->increment('balance', ($request["Amount"] / 100));
+
+                $order = new Order();
+                $order->user_id = $request["customerId"];
+                $order->order_number = 'ORD-' . Str::random(10);
+                $order->total_amount = ($request["Amount"] / 100);
+                $order->status = 'completed'; // เปลี่ยนเป็น processing เลยเพราะชำระเงินแล้ว
+                $order->save();
+                // บันทึกรายการเติมเงินระหว่างดำเนินการ
+                $transaction = new Transaction();
+                $transaction->order_id = $order->id;
+                $transaction->user_id = $request["customerId"];
+                $transaction->transaction_id = $request["OrderNo"];
+                $transaction->amount = ($request["Amount"] / 100); // เก็บเป็นบาท
+                $transaction->type = 'topup';
+                $transaction->status = 'successful';
+                $transaction->payment_details = [
+                    'method' => 'chillpay',
+                    'request_time' => now()->toDateTimeString(),
+                    'amount_requested' => ($request["Amount"] / 100),
+                ];
+                $transaction->save();
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+                /* return redirect()->back(); */
+            }
+        }
+    }
+
 }

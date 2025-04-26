@@ -46,12 +46,18 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('orders', OrderController::class);
     Route::post('/products/{product}/buy', [OrderController::class, 'buy'])->name('products.buy');
     // การชำระเงิน
+    Route::post('/topup/truemoney/process', [PaymentController::class, 'processTruemoneyTopup'])->name('topup.truemoney.process');
+
     Route::get('/topup', [PaymentController::class, 'toupIndex'])->name('topup');
     Route::get('/topup/history', [PaymentController::class, 'topupHistory'])->name('topup.history');
     Route::get('/topup/truewallet', [PaymentController::class, 'toupTruemoney'])->name('toupTruemoney');
     Route::get('/topup/chillpay', [PaymentController::class, 'toupChillpay'])->name('toupChillpay');
     Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
     Route::post('/payments/process', [PaymentController::class, 'process'])->name('payments.process');
+
+    Route::post('/topup/chillpay/process', [PaymentController::class, 'processChillpay'])->name('topup.chillpay.process');
+    
+
 
     Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
     Route::post('/payments/process', [PaymentController::class, 'process'])->name('payments.process');
