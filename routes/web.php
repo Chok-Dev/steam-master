@@ -10,6 +10,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\SteamGuardController;
 
+
+
 Route::get('/download/mafile/{orderItem}', [DownloadController::class, 'downloadMafile'])
     ->middleware(['auth', 'owner.check'])
     ->name('download.mafile');
@@ -24,6 +26,8 @@ Route::get('/search', [ProductController::class, 'search'])->name('products.sear
 
 // ต้องล็อกอินก่อน
 Route::middleware(['auth'])->group(function () {
+   
+
     Route::get('/orders/{orderItem}/steam-guard', [SteamGuardController::class, 'showSteamGuard'])
         ->name('steam-guard.show');
     Route::get('/api/orders/{orderItem}/steam-guard-code', [SteamGuardController::class, 'getCode'])
@@ -39,6 +43,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/products/{product}/buy', [OrderController::class, 'buy'])->name('products.buy');
 
     // การชำระเงิน
+    Route::get('/topup', [PaymentController::class, 'toupIndex'])->name('topup');
+    Route::get('/topup/truewallet', [PaymentController::class, 'toupTruemoney'])->name('toupTruemoney');
+    Route::get('/topup/chillpay', [PaymentController::class, 'toupChillpay'])->name('toupChillpay');
+    Route::get('/checkout/{order}', [PaymentController::class, 'checkout'])->name('checkout');
+    Route::get('/checkout/{order}', [PaymentController::class, 'checkout'])->name('checkout');
+
     Route::get('/checkout/{order}', [PaymentController::class, 'checkout'])->name('checkout');
     Route::post('/payments/process/{order}', [PaymentController::class, 'process'])->name('payments.process');
     Route::post('/payments/release/{orderItem}', [PaymentController::class, 'escrowRelease'])->name('payments.release');

@@ -287,6 +287,13 @@
                   </a>
                 </li>
                 <li class="nav-main-item">
+                  <a class="nav-main-link{{ request()->routeIs('topup') ? ' active' : '' }}"
+                    href="{{ route('topup') }}">
+                    <i class="nav-main-link-icon fa fa-money-bill-wave"></i>
+                    <span class="nav-main-link-name">เติมเงิน</span>
+                  </a>
+                </li>
+                <li class="nav-main-item">
                   <a class="nav-main-link{{ request()->routeIs('messages.*') ? ' active' : '' }}"
                     href="{{ route('messages.index') }}">
                     <i class="nav-main-link-icon fa fa-envelope"></i>

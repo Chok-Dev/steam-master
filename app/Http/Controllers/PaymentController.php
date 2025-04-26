@@ -127,4 +127,16 @@ class PaymentController extends Controller
 
         return redirect()->back()->with('success', 'ยืนยันการรับรหัสเกมเรียบร้อยแล้ว เงินได้ถูกโอนไปยังผู้ขายแล้ว');
     }
+
+    public function toupIndex(){
+        return view('truemoney.index');
+    }
+    public function toupTruemoney(){
+        return view('truemoney.topup');
+    }
+    public function toupChillpay(){
+        return view('truemoney.topupchillpay');
+    }
+
+
 }
