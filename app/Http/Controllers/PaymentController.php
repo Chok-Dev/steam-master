@@ -427,12 +427,17 @@ class PaymentController extends Controller
         if ($request["PaymentStatus"] == 0) {
             DB::beginTransaction();
             try {
-                User::find($request["CustomerId"])->increment('balance', ($request["Amount"] / 100));
+                
+                $amountBaht = $request["Amount"] / 100;
+                $fee = max($amountBaht * 0.029, 15); // ค่าธรรมเนียม 2.9% หรือขั้นต่ำ 15 บาท
+                $totalAmount = $amountBaht + $fee;
+
+                User::find($request["CustomerId"])->increment('balance', $totalAmount);
 
                 $order = new Order();
                 $order->user_id = $request["customerId"];
                 $order->order_number = 'ORD-' . Str::random(10);
-                $order->total_amount = ($request["Amount"] / 100);
+                $order->total_amount = $totalAmount;
                 $order->status = 'completed'; // เปลี่ยนเป็น processing เลยเพราะชำระเงินแล้ว
                 $order->save();
                 // บันทึกรายการเติมเงินระหว่างดำเนินการ
@@ -440,13 +445,14 @@ class PaymentController extends Controller
                 $transaction->order_id = $order->id;
                 $transaction->user_id = $request["customerId"];
                 $transaction->transaction_id = $request["OrderNo"];
-                $transaction->amount = ($request["Amount"] / 100); // เก็บเป็นบาท
+                $transaction->amount = $totalAmount; // เก็บเป็นบาท
                 $transaction->type = 'topup';
                 $transaction->status = 'successful';
                 $transaction->payment_details = [
                     'method' => 'chillpay',
                     'request_time' => now()->toDateTimeString(),
-                    'amount_requested' => ($request["Amount"] / 100),
+                    'amount_requested' => $totalAmount,
+                    'fee' => $fee,
                 ];
                 $transaction->save();
                 DB::commit();

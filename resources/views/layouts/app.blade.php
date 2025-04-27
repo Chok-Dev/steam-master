@@ -67,6 +67,7 @@
                     data-action="side_overlay_close">
                     <i class="fa fa-fw fa-times"></i>
                 </button>
+                
                 <!-- END Close Side Overlay -->
             </div>
             <!-- END Side Header -->
@@ -231,6 +232,7 @@
                             </div>
                             <!-- END Visible only in normal mode -->
                         </div>
+                        
                     @endauth
                     <!-- END Side User -->
 

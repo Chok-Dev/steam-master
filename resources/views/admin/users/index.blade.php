@@ -95,7 +95,7 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0">
-                                            <img class="img-avatar img-avatar32" src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('assets/codebase/media/avatars/avatar10.jpg') }}" alt="{{ $user->name }}">
+                                            <img class="img-avatar img-avatar32" src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('media/avatars/avatar15.jpg') }}" alt="{{ $user->name }}">
                                         </div>
                                         <div class="ms-2">{{ $user->name }}</div>
                                     </div>

@@ -34,12 +34,12 @@
                 <p class="card-text fw-bold fs-6 text-danger">ค่าธรรมเนียม: ฿{{ number_format($fee, 2) }}</p>
                 <hr>
                 <p class="card-text fw-bold fs-5">ยอดที่ต้องชำระทั้งหมด: ฿{{ number_format($totalAmount, 2) }}</p>
+
             </div>
+
         </div>
+
     </div>
-
-
-
     <form id="payment-form" action="https://cdn.chillpay.co/Payment/" method="post" role="form"
         class="form-horizontal">
         <modernpay:widget id="modernpay-widget-container" data-merchantid="{{ $merchantCode }}"
@@ -48,8 +48,11 @@
             data-apikey="{{ $apiKey }}" data-checksum="{{ $checksum }}"
             data-description="{{ $description }}" data-lang="{{ $langCode }}">
         </modernpay:widget>
-        <button type="submit" id="btnSubmit" value="Submit" class="btn">Payment</button>
+        <button type="submit" id="btnSubmit" value="Submit" class="btn"></button>
     </form>
+
+
+
 
     <script async src="https://cdn.chillpay.co/js/widgets.js?v=1.00" charset="utf-8"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

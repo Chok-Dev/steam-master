@@ -95,12 +95,12 @@
                                 </div>
                             </div>
                             
-                            <div class="mb-4">
+                            {{-- <div class="mb-4">
                                 <div class="h-captcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
                                 @error('g-recaptcha-response')
                                     <div class="text-danger mt-2">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
                             
                             <div class="mb-4">
                                 <button type="submit" class="btn btn-primary">
@@ -121,7 +121,7 @@
                         <h3 class="block-title">ช่องทางการชำระเงิน</h3>
                     </div>
                     <div class="block-content">
-                        <div class="row mb-4">
+                        {{-- <div class="row mb-4">
                             <div class="col-12">
                                 <h5 class="mb-3">บัตรเครดิต/เดบิต</h5>
                                 <div class="payment-methods d-flex flex-wrap">
@@ -144,7 +144,7 @@
                                     <div class="p-2"><img src="{{ asset('assets/img/payments/ttb.png') }}" alt="TTB" height="30"></div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         
                         <div class="row mb-4">
                             <div class="col-12">

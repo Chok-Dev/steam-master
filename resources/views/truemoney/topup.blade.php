@@ -46,13 +46,13 @@
               </div>
             </div>
 
-            <div class="mb-4">
+          {{--   <div class="mb-4">
               <div class="h-captcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
               @error('g-recaptcha-response')
                 <div class="text-danger mt-2">{{ $message }}</div>
               @enderror
             </div>
-
+ --}}
             <div class="mb-4">
               <button type="submit" class="btn btn-primary">
                 <i class="fa fa-money-bill-wave me-1"></i> เติมเงิน

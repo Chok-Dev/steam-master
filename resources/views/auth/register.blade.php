@@ -23,8 +23,7 @@
     <!-- Open Graph Meta -->
     <meta property="og:title" content="JDTC HUB - REGISTER">
     <meta property="og:site_name" content="Codebase">
-    <meta property="og:description"
-        content="JDTC HUB - REGISTER">
+    <meta property="og:description" content="JDTC HUB - REGISTER">
     <meta property="og:type" content="website">
     <meta property="og:url" content="">
     <meta property="og:image" content="">
@@ -85,33 +84,66 @@
                                     </div>
                                     <div class="block-content">
                                         <div class="form-floating mb-4">
-                                            <input type="text" class="form-control" id="name"
-                                                name="name" value="{{ old('name') }}" placeholder="Enter your name" required autofocus>
+                                            <input type="text"
+                                                class="form-control @error('name') is-invalid  @enderror" id="name"
+                                                name="name" value="{{ old('name') }}" placeholder="Enter your name"
+                                                required autofocus>
                                             <label class="form-label" for="name">name</label>
+                                            @error('name')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                         <div class="form-floating mb-4">
-                                            <input type="email" class="form-control" id="email"
-                                                name="email" placeholder="Enter your email" value="{{ old('email')}}" required>
+                                            <input type="email"
+                                                class="form-control @error('email') is-invalid  @enderror"
+                                                id="email" name="email" placeholder="Enter your email"
+                                                value="{{ old('email') }}" required>
                                             <label class="form-label" for="email">Email</label>
+                                            @error('email')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                         <div class="form-floating mb-4">
-                                            <input type="password" class="form-control" id="password"
-                                                name="password" placeholder="Enter your password">
+                                            <input type="password"
+                                                class="form-control @error('password') is-invalid  @enderror"
+                                                id="password" name="password" placeholder="Enter your password">
                                             <label class="form-label" for="password">Password</label>
+                                            @error('password')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                         <div class="form-floating mb-4">
-                                            <input type="password" class="form-control" id="password_confirmation"
-                                                name="password_confirmation" placeholder="Confirm password">
+                                            <input type="password"
+                                                class="form-control @error('password_confirmation') is-invalid  @enderror"
+                                                id="password_confirmation" name="password_confirmation"
+                                                placeholder="Confirm password">
                                             <label class="form-label" for="password_confirmation">Confirm
                                                 Password</label>
+                                            @error('password_confirmation')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-6 d-sm-flex align-items-center push">
                                                 <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" id="signup-terms"
-                                                        name="signup-terms" value="1">
+                                                    <input type="checkbox"
+                                                        class="form-check-input @error('signup-terms') is-invalid  @enderror"
+                                                        id="signup-terms" name="signup-terms" value="1">
                                                     <label class="form-check-label" for="signup-terms">I agree to
                                                         Terms</label>
+                                                    @error('signup-terms')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-sm-6 text-sm-end push">
